@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>My Cool Page nested</title>
+ </head>
+ <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    #chat-container {
+      max-width: 400px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #chat-messages {
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      background-color: #fff;
+    }
+
+    #user-input {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #eee;
+    }
+
+    #user-message {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #send-button {
+      margin-left: 10px;
+      padding: 8px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat-container">
+  <div id="chat-messages"></div>
+  <div id="user-input">
+    <input type="text" id="user-message" placeholder="Type your message...">
+    <button id="send-button" onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    const userMessage = document.getElementById('user-message').value;
+    if (userMessage.trim() === '') {
+      return;
+    }
+
+    appendMessage('You', userMessage);
+    // Add logic here to handle the user's input and generate a bot response (not included in this example)
+    // For simplicity, the bot response is hardcoded in this example
+    const botResponse = 'This is a simple bot response.';
+    setTimeout(() => appendMessage('Bot', botResponse), 500);
+
+    // Clear the user input
+    document.getElementById('user-message').value = '';
+  }
+
+  function appendMessage(sender, message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    chatMessages.appendChild(messageElement);
+
+    // Scroll to the bottom of the chat container
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
+
+</head>
+ </body>
+</html>
