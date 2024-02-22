@@ -16,10 +16,17 @@
     <ul id="listings"></ul>
 
     <script>
-        // Function to make the API request
+        // Function to make the API request with parameters
         function fetchListings() {
-            // Make a GET request to the API endpoint
-            fetch('https://zeitgeists.org/api', {
+            const authToken = 'hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R'; // Replace 'YOUR_AUTH_TOKEN' with your actual authentication token
+            const startDate = '2024-02-27';
+            const endDate = '2024-03-15';
+            
+            // Construct the URL with parameters
+            const apiUrl = `https://zeitgeists.org/api?startDate=${startDate}&endDate=${endDate}`;
+
+            // Make a GET request to the API endpoint with parameters and authentication token in headers
+            fetch(apiUrl, {
                 headers: {
                     'Authorization': `Bearer ${authToken}`
                 }
@@ -63,5 +70,8 @@
         window.onload = fetchListings;
     </script>
 </body>
+</html>
+
+ </body>
 
 </html>
