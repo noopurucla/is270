@@ -4,103 +4,64 @@
  <title>My Cool Page</title>
  </head>
  <body>
-<head>
-
-<meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navigation Menu</title>
-  <style>
-    /* Add some basic styles for better appearance */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav {
-      background-color: #333;
-      overflow: hidden;
-    }
-
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    li {
-      float: left;
-    }
-
-    li a {
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-    }
-
-    li a:hover {
-      background-color: #111;
-    }
-  </style>
-</head>
-<body>
-
-<nav>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#santostestl">santostest</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<!-- Add your page content below this line -->
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-  />
-<h1 class="animate__animated animate__bounce"><p>I ❤️ life</p></h1>
-<h1 class="animate__animated animate__slow">An animated element</h1>
-
- <iframe style="width: 640px; height: 360px; overflow: hidden;"  scrolling="no" frameborder="0" src="https://editor.p5js.org/noopurucla/full/t5YTNVJMU"></iframe>
-<link rel="stylesheet" type="text/css" href="https://semantic-ui.com/dist/components/reset.css">
- <div class="ui text container">
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Call Example</title>
+    <title>API Request Example</title>
 </head>
 <body>
- 
-const apiUrl = 'https://cataas.com/cat/cat/gif';
+    <h1>Listings:</h1>
+    <ul id="listings"></ul>
 
-fetch(https://cataas.com/cat/cat/gif)
-  .then(response => response.json())
-  .then(data => {
-    // Assuming the response contains an image URL
-    const imageUrl = data.url;
+    <script>
+        // Function to make the API request
+        function fetchListings() {
+            // Make a GET request to the API endpoint
+            fetch('https://zeitgeists.org/api', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            })
+                .then(response => {
+                    // Check if the response is successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Parse the JSON response
+                    return response.json();
+                })
+                .then(data => {
+                    // Process the response data and display it
+                    displayListings(data);
+                })
+                .catch(error => {
+                    // Display any errors that occurred
+                    console.error('Error:', error);
+                    document.getElementById('listings').textContent = 'Error: ' + error.message;
+                });
+        }
 
-    // Now you can use the imageUrl as you like
-    console.log('Cat image URL:', imageUrl);
+        // Function to display listings on the page
+        function displayListings(data) {
+            const listings = data.data; // Assuming "data" contains paginated listing data with details
+            const listingsContainer = document.getElementById('listings');
 
-    // Example: Display the image on a webpage
-    const img = document.createElement('img');
-    img.src = imageUrl;
-    document.body.appendChild(img);
-  })
-  .catch(error => console.error('Error fetching cat image:', error));
+            // Clear any existing listings
+            listingsContainer.innerHTML = '';
 
+            // Iterate through each listing and create list items to display them
+            listings.forEach(listing => {
+                const listItem = document.createElement('li');
+                listItem.textContent = listing.details; // Adjust this according to the structure of your data
+                listingsContainer.appendChild(listItem);
+            });
+        }
 
+        // Call the fetchListings function when the page loads
+        window.onload = fetchListings;
+    </script>
 </body>
-</html>
 
-
-</head>
- </body>
 </html>
