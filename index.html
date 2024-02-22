@@ -1,38 +1,67 @@
-// Function to make the API request with parameters
-function fetchListings() {
-    const authToken = 'hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R';
-    const startDate = '2024-02-27';
-    const endDate = '2024-03-15';
-    
-    // Construct the URL with parameters
-    const apiUrl = `zeitgeists.org/api/v1/?startDate=${startDate}&endDate=${endDate}`;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cool Page</title>
+</head>
+<body>
+    <h1>Listings:</h1>
+    <ul id="listings"></ul>
 
-    // Make a GET request to the API endpoint with parameters and authentication token in headers
-    fetch(apiUrl, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`
+    <script>
+        // Function to make the API request with parameters
+        function fetchListings() {
+            const authToken = 'hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R'; // Replace 'YOUR_AUTH_TOKEN' with your actual authentication token
+            const startDate = '2024-02-27';
+            const endDate = '2024-03-15';
+            
+            // Construct the URL with parameters
+            const apiUrl = `https://zeitgeists.org/api/v1/?startDate=${startDate}&endDate=${endDate}`;
+
+            // Make a GET request to the API endpoint with parameters and authentication token in headers
+            fetch(apiUrl, {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            })
+                .then(response => {
+                    // Check if the response is successful
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Parse the JSON response
+                    return response.json();
+                })
+                .then(data => {
+                    // Process the response data and display it
+                    displayListings(data);
+                })
+                .catch(error => {
+                    // Display any errors that occurred
+                    console.error('Error:', error);
+                    document.getElementById('listings').textContent = 'Error: ' + error.message;
+                });
         }
-    })
-    .then(response => {
-        // Check if the response is successful
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+
+        // Function to display listings on the page
+        function displayListings(data) {
+            const listings = data.data; // Assuming "data" contains paginated listing data with details
+            const listingsContainer = document.getElementById('listings');
+
+            // Clear any existing listings
+            listingsContainer.innerHTML = '';
+
+            // Iterate through each listing and create list items to display them
+            listings.forEach(listing => {
+                const listItem = document.createElement('li');
+                listItem.textContent = listing.details; // Adjust this according to the structure of your data
+                listingsContainer.appendChild(listItem);
+            });
         }
-        // Check content type
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Unexpected response type');
-        }
-        // Parse the JSON response
-        return response.json();
-    })
-    .then(data => {
-        // Process the response data and display it
-        displayListings(data);
-    })
-    .catch(error => {
-        // Display any errors that occurred
-        console.error('Error:', error);
-        document.getElementById('listings').textContent = 'Error: ' + error.message;
-    });
-}
+
+        // Call the fetchListings function when the page loads
+        window.onload = fetchListings;
+    </script>
+</body>
+</html>
