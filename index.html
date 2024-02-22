@@ -3,44 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrieve Listing by ID</title>
+    <title>Spotify Recommendations</title>
 </head>
 <body>
+    <div id="response"></div>
 
-<h1>Listing Details</h1>
-
-<div id="listingDetails"></div>
-
-<script>
-    const authToken = "hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R";
-    const listingId = "99fb0d7b-1202-4e53-989d-3e7b74b12d0e"; // Replace this with the ID of the listing you want to retrieve
-
-    const apiUrl = `https://zeitgeists.org/api/v1/?id=${listingId}`;
-    fetch(apiUrl, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const listingDetailsDiv = document.getElementById('listingDetails');
-        listingDetailsDiv.innerHTML = `
-            <h2>${data.title}</h2>
-            <p>${data.description}</p>
-            <p>Price: $${data.price}</p>
-            <p>Location: ${data.location}</p>
-            <!-- Add more details as needed -->
-        `;
-    })
-    .catch(error => {
-        console.error('Error fetching listing details:', error);
-    });
-</script>
-
-</body>
-</html>
+    <script>
+        // Function to make an HTTP request
+        function makeRequest() {
+            var xhr = new XMLHttpRequest();
+            var url = 'https://api.spotify.com/v1/recommendations';
+            var params = '?seed_artists=5INjqkS1o8h1imAzPqGZBb&seed_genres=blues&seed_tracks=52ojopYMUzeNcudsoz7O9D&min_danceability=0.56&target_speechiness=0.75';
+            
+            xhr.open('GET', url + params, true);
+            xhr.setRequestHeader('Authorization', 'Bearer YOUR_ACCESS_TOKEN'); // Replace YOUR_ACCESS_TOKEN with your actual access token
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById('response').innerHTML = JSON.stringify(response, null, 2);
+           
