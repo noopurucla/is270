@@ -3,65 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cool Page</title>
+    <title>Retrieve Listing by ID</title>
 </head>
 <body>
-    <h1>Listings:</h1>
-    <ul id="listings"></ul>
 
-    <script>
-        // Function to make the API request with parameters
-        function fetchListings() {
-            const authToken = 'hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R'; // Replace 'YOUR_AUTH_TOKEN' with your actual authentication token
-            const startDate = '2024-02-27';
-            const endDate = '2024-03-15';
-            
-            // Construct the URL with parameters
-            const apiUrl = `https://zeitgeists.org/api/v1/startDate=${startDate}&endDate=${endDate}`;
+<h1>Listing Details</h1>
 
-            // Make a GET request to the API endpoint with parameters and authentication token in headers
-            fetch(apiUrl, {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
-            })
-                .then(response => {
-                    // Check if the response is successful
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // Parse the JSON response
-                    return response.json();
-                })
-                .then(data => {
-                    // Process the response data and display it
-                    displayListings(data);
-                })
-                .catch(error => {
-                    // Display any errors that occurred
-                    console.error('Error:', error);
-                    document.getElementById('listings').textContent = 'Error: ' + error.message;
-                });
+<div id="listingDetails"></div>
+
+<script>
+    const authToken = "hhPhUd8ytuF0tAg3bCc1YTylm2mrlHLCpRXpH3nPYmGlV876AKcvN33R";
+    const listingId = "99fb0d7b-1202-4e53-989d-3e7b74b12d0e"; // Replace this with the ID of the listing you want to retrieve
+
+    const apiUrl = `https://zeitgeists.org/api/v1/?id=${listingId}`;
+    fetch(apiUrl, {
+        headers: {
+            'Authorization': `Bearer ${authToken}`
         }
-
-        // Function to display listings on the page
-        function displayListings(data) {
-            const listings = data.data; // Assuming "data" contains paginated listing data with details
-            const listingsContainer = document.getElementById('listings');
-
-            // Clear any existing listings
-            listingsContainer.innerHTML = '';
-
-            // Iterate through each listing and create list items to display them
-            listings.forEach(listing => {
-                const listItem = document.createElement('li');
-                listItem.textContent = listing.details; // Adjust this according to the structure of your data
-                listingsContainer.appendChild(listItem);
-            });
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        const listingDetailsDiv = document.getElementById('listingDetails');
+        listingDetailsDiv.innerHTML = `
+            <h2>${data.title}</h2>
+            <p>${data.description}</p>
+            <p>Price: $${data.price}</p>
+            <p>Location: ${data.location}</p>
+            <!-- Add more details as needed -->
+        `;
+    })
+    .catch(error => {
+        console.error('Error fetching listing details:', error);
+    });
+</script>
 
-        // Call the fetchListings function when the page loads
-        window.onload = fetchListings;
-    </script>
 </body>
 </html>
