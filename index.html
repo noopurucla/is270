@@ -3,24 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bored API Example</title>
+    <title>Activity and EPIC Images</title>
 </head>
 <body>
-    <h1>Activity Generator</h1>
-    <button id="generateActivity">Generate Activity</button>
-    <p id="activity"></p>
+    <section id="boredApi">
+        <h1>Activity Generator</h1>
+        <button id="generateActivity">Generate Activity</button>
+        <p id="activity"></p>
 
-    <script>
-        document.getElementById("generateActivity").addEventListener("click", function() {
-            fetch("https://www.boredapi.com/api/activity")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("activity").innerText = data.activity;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
+        <script>
+            document.getElementById("generateActivity").addEventListener("click", function() {
+                fetch("https://www.boredapi.com/api/activity")
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("activity").innerText = data.activity;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            });
+        </script>
+    </section>
+
+    <section id="epicImages">
+        <h1>EPIC Images</h1>
+        <div id="images"></div>
+
+        <script>
+            // Function to make API request
+            function fetchEpicImages() {
+                var apiKey = "tLfXmr9we8oQMiHwblp4vDg5bu8SSezETaYX3xiL";
+                var apiUrl = "https://api.nasa.gov/EPIC/api/natural/images?api_key=" + apiKey;
+
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => displayImages(data))
+                    .catch(error => console.error('Error fetching EPIC images:', error));
+            }
+
+            // Function to display images data
+            function displayImages(imagesData) {
+                var imagesContainer = document.getElementById("images");
+
+                imagesData.forEach(function(imageData) {
+                    var imageElement = document.createElement("div");
+
+                    // Constructing the HTML content for each image
+                    var htmlContent = `
+                        <p><strong>Identifier:</strong> ${imageData.identifier}</p>
+                        <p><strong>Caption:</strong> ${imageData.caption}</p>
+                        <img src="https://epic.gsfc.nasa.gov/archive/natural/${imageData.date.split(' ')[0].replace(/-/g, '/')}/png/${imageData.image}.png" alt="EPIC Image">
+                        <p><strong>Date:</strong> ${imageData.date}</p>
+                    `;
+
+                    imageElement.innerHTML = htmlContent;
+                    imagesContainer.appendChild(imageElement);
                 });
-        });
-    </script>
+            }
+
+            // Call the function to fetch and display images
+            fetchEpicImages();
+        </script>
+    </section>
 </body>
 </html>
