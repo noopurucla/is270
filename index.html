@@ -4,15 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity and EPIC Images</title>
-<style>
-        .epic-image {
-            width: 100vw; /* Set the width to 100% of the viewport width */
-            height: auto; /* Automatically adjust the height to maintain aspect ratio */
-            display: block; /* Ensure the image is displayed as a block element */
-            margin: 0 auto; /* Center the image horizontally */
-        }
-    </style>
-</head>
 <body>
     <section id="boredApi">
         <h1>Activity Generator</h1>
@@ -32,51 +23,32 @@
             });
         </script>
     </section>
+<section id=APOD>    
+    <h1>Astronomy Picture of the Day</h1>
+    <div id="apodImageContainer"></div>
+    
+    <script>
+        // Your NASA API key
+        const apiKey = "tLfXmr9we8oQMiHwblp4vDg5bu8SSezETaYX3xiL";
 
-    <section id="epicImages">
-        <h1>EPIC Images</h1>
-        <div id="images"></div>
-
-        <script>
-            // Function to make API request
-            function fetchEpicImages() {
-                var apiKey = "tLfXmr9we8oQMiHwblp4vDg5bu8SSezETaYX3xiL";
-                var apiUrl = "https://api.nasa.gov/EPIC/api/natural/images?api_key=" + apiKey;
-
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => displayImages(data))
-                    .catch(error => console.error('Error fetching EPIC images:', error));
-            }
-
-            // Function to display images data
-            function displayImages(imagesData) {
-                var imagesContainer = document.getElementById("images");
-
-                imagesData.forEach(function(imageData) {
-                    var imageElement = document.createElement("div");
-
-                    // Constructing the HTML content for each image
-                    var htmlContent = `
-                        <p><strong>Identifier:</strong> ${imageData.identifier}</p>
-                        <p><strong>Caption:</strong> ${imageData.caption}</p>
-                        <img src="https://epic.gsfc.nasa.gov/archive/natural/${imageData.date.split(' ')[0].replace(/-/g, '/')}/png/${imageData.image}.png" alt="EPIC Image">
-                        <p><strong>Date:</strong> ${imageData.date}</p>
-                    `;
-
-                    imageElement.innerHTML = htmlContent;
-                    imagesContainer.appendChild(imageElement);
-                });
-            }
-
-            // Call the function to fetch and display images
-            fetchEpicImages();
-        </script>
-    </section>
+        // Fetch APOD image
+        fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}`)
+            .then(response => response.json())
+            .then(data => {
+                // Check if the response contains an image URL
+                if (data.url) {
+                    // Create an image element
+                    const imageElement = document.createElement("img");
+                    imageElement.src = data.url;
+                    imageElement.alt = "Astronomy Picture of the Day";
+                    // Add the image to the container
+                    document.getElementById("apodImageContainer").appendChild(imageElement);
+                } else {
+                    console.error("No image URL found in the response");
+                }
+            })
+            .catch(error => console.error("Error fetching APOD data:", error));
+    </script>
+</section>
 </body>
 </html>
