@@ -50,5 +50,61 @@
             .catch(error => console.error("Error fetching APOD data:", error));
     </script>
 </section>
+    <section id=openweather>
+        <h1>Los Angeles weather</h1>
+         <div id="forecast"></div>
+
+    <script>
+        // Function to fetch weather forecast data
+        function fetchWeatherForecast() {
+            // Define the latitude and longitude
+            const latitude = 34.0522;
+            const longitude = -118.2437;
+            // Define the API endpoint with required parameters
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,rain,showers`;
+
+            // Fetch data from the API
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Process the forecast data
+                    displayForecast(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching weather forecast:', error);
+                });
+        }
+
+        // Function to display the weather forecast
+        function displayForecast(data) {
+            const forecastContainer = document.getElementById('forecast');
+            forecastContainer.innerHTML = ''; // Clear previous content
+
+            // Loop through hourly forecast data
+            data.hourly.forEach(hour => {
+                // Create a div element for each hour
+                const hourDiv = document.createElement('div');
+                hourDiv.classList.add('hour');
+
+                // Construct the HTML content for the hour
+                const htmlContent = `
+                    <p>Time: ${hour.time}</p>
+                    <p>Temperature: ${hour.temperature_2m}°C</p>
+                    <p>Rain: ${hour.rain ? 'Yes' : 'No'}</p>
+                    <p>Showers: ${hour.showers ? 'Yes' : 'No'}</p>
+                `;
+
+                // Set the HTML content for the hour div
+                hourDiv.innerHTML = htmlContent;
+
+                // Append the hour div to the forecast container
+                forecastContainer.appendChild(hourDiv);
+            });
+        }
+
+        // Call the function to fetch weather forecast data
+        fetchWeatherForecast();
+    </script>
+    </section>
 </body>
 </html>
