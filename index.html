@@ -9,11 +9,8 @@
 <body>
     <h1>Weather Forecast</h1>
     <form id="weatherForm">
-        <label for="latitude">Latitude:</label>
-        <input type="text" id="latitude" name="latitude" required>
-        <br>
-        <label for="longitude">Longitude:</label>
-        <input type="text" id="longitude" name="longitude" required>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
         <br>
         <button type="submit">Get Weather Forecast</button>
     </form>
@@ -22,11 +19,27 @@
     </div>
 
     <script>
+        // Function to fetch latitude and longitude coordinates from a city name using a geocoding API
+        function fetchCoordinates(city) {
+            const geocodingApiUrl = `https://api.open-meteo.com/v1/geocode?city=${encodeURIComponent(city)}`;
+
+            return fetch(geocodingApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.latitude && data.longitude) {
+                        return { latitude: data.latitude, longitude: data.longitude };
+                    } else {
+                        throw new Error("Coordinates not found for the specified city.");
+                    }
+                })
+                .catch(error => console.error('Error fetching coordinates:', error));
+        }
+
         // Function to fetch weather data from Open Meteo API
         function fetchWeatherData(latitude, longitude) {
-            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m`;
+            const weatherApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m`;
 
-            return fetch(apiUrl)
+            return fetch(weatherApiUrl)
                 .then(response => response.json())
                 .then(data => {
                     // Extract relevant information (time and temperature)
@@ -39,41 +52,4 @@
 
         // Function to create and display the chart
         function createChart(timestamps, temperatures) {
-            const ctx = document.getElementById('weatherChart').getContext('2d');
-            const weatherChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timestamps,
-                    datasets: [{
-                        label: 'Temperature (°C)',
-                        data: temperatures,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // Function to handle form submission
-        document.getElementById('weatherForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const latitude = document.getElementById('latitude').value;
-            const longitude = document.getElementById('longitude').value;
-
-            // Fetch weather data using the provided latitude and longitude
-            fetchWeatherData(latitude, longitude)
-                .then(({ timestamps, temperatures }) => {
-                    createChart(timestamps, temperatures);
-                });
-        });
-    </script>
-</body>
-</html>
+            con
