@@ -22,7 +22,7 @@
     <div class="cat-container" id="catContainer"></div>
 
     <script>
-        fetch('https://cataas.com/api/cats?tags=cute,gif')
+        fetch('https://cataas.com/api/cats?tags=gif')
             .then(response => response.json())
             .then(data => {
                 const catContainer = document.getElementById('catContainer');
