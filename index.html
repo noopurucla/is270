@@ -3,115 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity, APOD, and Weather Forecast</title>
-    <style>
-        /* CSS for thumbnail images */
-        .thumbnail {
-            max-width: 200px; /* Adjust as needed */
-            height: auto;
-        }
-    </style>
+    <title>Weather Forecast Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <body>
-    <section id="boredApi">
-        <h1>Activity Generator</h1>
-        <button id="generateActivity">Generate Activity</button>
-        <p id="activity"></p>
-
-        <script>
-            document.getElementById("generateActivity").addEventListener("click", function() {
-                fetch("https://www.boredapi.com/api/activity")
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("activity").innerText = data.activity;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            });
-        </script>
-    </section>
-<section id=APOD>    
-    <h1>Astronomy Picture of the Day</h1>
-    <div id="apodImageContainer"></div>
-    
-    <script>
-        // Your NASA API key
-        const apiKey = "tLfXmr9we8oQMiHwblp4vDg5bu8SSezETaYX3xiL";
-
-        // Fetch APOD image
-        fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}`)
-            .then(response => response.json())
-            .then(data => {
-                // Check if the response contains an image URL
-                if (data.url) {
-                    // Create an image element
-                    const imageElement = document.createElement("img");
-                    imageElement.src = data.url;
-                    imageElement.alt = "Astronomy Picture of the Day";
-                    // Add the image to the container
-                    document.getElementById("apodImageContainer").appendChild(imageElement);
-                } else {
-                    console.error("No image URL found in the response");
-                }
-            })
-            .catch(error => console.error("Error fetching APOD data:", error));
-    </script>
-</section>
-    <section id=openweather>
-        <h1>Los Angeles weather</h1>
-         <div id="forecast"></div>
+    <h1>Weather Forecast</h1>
+    <canvas id="weatherChart" width="800" height="400"></canvas>
 
     <script>
-        // Function to fetch weather forecast data
-        function fetchWeatherForecast() {
-            // Define the latitude and longitude
-            const latitude = 34.0522;
-            const longitude = -118.2437;
-            // Define the API endpoint with required parameters
-            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,rain,showers`;
+        // Function to fetch weather data from Open Meteo API
+        function fetchWeatherData(latitude, longitude) {
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m`;
 
-            // Fetch data from the API
-            fetch(apiUrl)
+            return fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    // Process the forecast data
-                    displayForecast(data);
+                    // Extract relevant information (time and temperature)
+                    const timestamps = data.hourly.map(entry => entry.time);
+                    const temperatures = data.hourly.map(entry => entry.temperature_2m);
+                    return { timestamps, temperatures };
                 })
-                .catch(error => {
-                    console.error('Error fetching weather forecast:', error);
-                });
+                .catch(error => console.error('Error fetching weather data:', error));
         }
 
-        // Function to display the weather forecast
-        function displayForecast(data) {
-            const forecastContainer = document.getElementById('forecast');
-            forecastContainer.innerHTML = ''; // Clear previous content
-
-            // Loop through hourly forecast data
-            data.hourly.forEach(hour => {
-                // Create a div element for each hour
-                const hourDiv = document.createElement('div');
-                hourDiv.classList.add('hour');
-
-                // Construct the HTML content for the hour
-                const htmlContent = `
-                    <p>Time: ${hour.time}</p>
-                    <p>Temperature: ${hour.temperature_2m}°C</p>
-                    <p>Rain: ${hour.rain ? 'Yes' : 'No'}</p>
-                    <p>Showers: ${hour.showers ? 'Yes' : 'No'}</p>
-                `;
-
-                // Set the HTML content for the hour div
-                hourDiv.innerHTML = htmlContent;
-
-                // Append the hour div to the forecast container
-                forecastContainer.appendChild(hourDiv);
+        // Function to create and display the chart
+        function createChart(timestamps, temperatures) {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+            const weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: temperatures,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
         }
 
-        // Call the function to fetch weather forecast data
-        fetchWeatherForecast();
+        // Call fetchWeatherData to get weather data and then create the chart
+        const latitude = 34.0522; // Los Angeles latitude
+        const longitude = -118.2437; // Los Angeles longitude
+        fetchWeatherData(latitude, longitude)
+            .then(({ timestamps, temperatures }) => {
+                createChart(timestamps, temperatures);
+            });
     </script>
-    </section>
 </body>
 </html>
