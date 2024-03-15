@@ -3,39 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astronomy Picture of the Day</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <title>Teachable Machine Image Model - p5.js and ml5.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/addons/p5.dom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ml5@latest/dist/ml5.min.js"></script>
 </head>
 <body>
-    <div>Teachable Machine Image Model</div>
-    <button type="button" onclick="init()">Start</button>
-    <div id="webcam-container"></div>
-    <div id="label-container"></div>
+    <div>Teachable Machine Image Model - p5.js and ml5.js</div>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+        let classifier;
+        let imageModelURL = 'https://teachablemachine.withgoogle.com/models/SDyBoSclA/';
 
-    <div id="apod-container">
-        <h1 id="title"></h1>
-        <p id="date"></p>
-        <img id="image" src="" alt="Astronomy Picture of the Day">
-        <p id="explanation"></p>
-        <p id="copyright"></p>
-    </div>
+        let video;
+        let flippedVideo;
+        let label = "";
 
-    <script>
-        // APOD API URL
-        const apodUrl = 'https://api.nasa.gov/planetary/apod?api_key=YOUR_API_KEY';
+        function preload() {
+            classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+        }
 
-        // Fetch APOD data
-        fetch(apodUrl)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('title').textContent = data.title;
-                document.getElementById('date').textContent = data.date;
-                document.getElementById('image').src = data.hdurl;
-                document.getElementById('explanation').textContent = data.explanation;
-                document.getElementById('copyright').textContent = `Copyright: ${data.copyrig
-            })
-            .catch(error => console.error('Error fetching APOD data:', error));
+        function setup() {
+            createCanvas(320, 260);
+            video = createCapture(VIDEO);
+            video.size(320, 240);
+            video.hide();
+
+            flippedVideo = ml5.flipImage(video);
+            classifyVideo();
+        }
+
+        function draw() {
+            background(0);
+            image(flippedVideo, 0, 0);
+
+            fill(255);
+            textSize(16);
+            textAlign(CENTER);
+            text(label, width / 2, height - 4);
+        }
+
+        function classifyVideo() {
+            flippedVideo = ml5.flipImage(video)
+            classifier.classify(flippedVideo, gotResult);
+            flippedVideo.remove();
+        }
+
+        function gotResult(error, results) {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            label = results[0].label;
+            classifyVideo();
+        }
     </script>
 </body>
 </html>
