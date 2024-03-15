@@ -4,33 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astronomy Picture of the Day</title>
- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
-</head>
 <body>
- <div>Teachable Machine Image Model</div>
+    <div>Teachable Machine Image Model</div>
     <button type="button" onclick="init()">Start</button>
     <div id="webcam-container"></div>
     <div id="label-container"></div>
-    <!-- Add the JavaScript code -->
-    <script type="text/javascript">
-        // Paste the JavaScript code here
-        // ...
 
-        // For simplicity, I'm omitting the JavaScript code you provided here.
-        // Make sure to paste it inside the <script> tag.
+    <div id="apod-container">
+        <h1 id="title"></h1>
+        <p id="date"></p>
+        <img id="image" src="" alt="Astronomy Picture of the Day">
+        <p id="explanation"></p>
+        <p id="copyright"></p>
+    </div>
+
+    <script>
+        // APOD API URL
+        const apodUrl = 'https://api.nasa.gov/planetary/apod?api_key=YOUR_API_KEY';
+
+        // Fetch APOD data
+        fetch(apodUrl)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('title').textContent = data.title;
+                document.getElementById('date').textContent = data.date;
+                document.getElementById('image').src = data.hdurl;
+                document.getElementById('explanation').textContent = data.explanation;
+                document.getElementById('copyright').textContent = `Copyright: ${data.copyrig
+            })
+            .catch(error => console.error('Error fetching APOD data:', error));
     </script>
-<div id="apod-container">
-    <h1 id="title"></h1>
-    <p id="date"></p>
-    <img id="image" src="" alt="Astronomy Picture of the Day">
-    <p id="explanation"></p>
-    <p id="copyright"></p>
-</div>
-
-<script>
-    const apodData = {
-        "copyright": "Helge Buesing",
-        "date": "2024-02-23",
-        "explanation": "This supernova shock wave plows through interstellar space at over 500,000 kilometers per hour. Centered and moving upward in the sharply detailed color composite its thin, bright, braided filaments are actually long ripples in a cosmic sheet of glowing gas seen almost edge-on. Discovered in the 1840s by Sir John Herschel, the narrow-looking nebula is sometimes known as Herschel's Ray. Cataloged as NGC 2736, its pointed appearance suggests its modern popular name, the Pencil Nebula. The Pencil Nebula is about 800 light-years away. Nearly 5 light-years long it represents only a small part of the Vela supernova remnant though. The enormous Vela remnant itself is around 100 light-years in diameter, the expanding debris 
+</body>
+</html>
